@@ -9,21 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var platform_browser_1 = require('@angular/platform-browser');
-var app_component_1 = require('./app.component');
-var menu_component_1 = require('./menu.component');
-var AppModule = (function () {
-    function AppModule() {
+var MENU_ITEMS = ["Item1", "Item2"];
+var MenuComponent = (function () {
+    function MenuComponent() {
+        this.title = "My menu";
+        this.items = MENU_ITEMS;
     }
-    AppModule = __decorate([
-        core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule],
-            declarations: [app_component_1.AppComponent, menu_component_1.MenuComponent],
-            bootstrap: [app_component_1.AppComponent]
+    MenuComponent = __decorate([
+        core_1.Component({
+            selector: 'my-menu',
+            template: "<h1>{{title}}</h1>\n        <div *ngFor=\"let it of items\">{{it}}</div>\n    "
         }), 
         __metadata('design:paramtypes', [])
-    ], AppModule);
-    return AppModule;
+    ], MenuComponent);
+    return MenuComponent;
 }());
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+exports.MenuComponent = MenuComponent;
+//# sourceMappingURL=menu.component.js.map
