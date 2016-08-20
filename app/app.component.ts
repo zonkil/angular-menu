@@ -19,15 +19,50 @@ import {Component} from '@angular/core';
     left: 0px;
     }`
     ],
-    template: '<h1>My First Angular 2 App</h1><h2>dupa 1234 dupa</h2><h3><button (click)="showMenu()">Show menu</button></h3><my-menu class="menu" [ngClass]="{menu_hide:hide, menu_show:show}"></my-menu>'
+    template: '<h1>My First Angular 2 App</h1><h2>dupa 1234 dupa</h2><h3><button (click)="showMenu($event)">Show menu</button></h3><my-menu id="left-menu" class="menu" [ngClass]="{menu_hide:hide, menu_show:!hide}"></my-menu>'
 })
 export class AppComponent {
-    hide: boolean = true;
+    hide:boolean = true;
     show:boolean = false;
 
-    showMenu(){
+    constructor() {
+        window.addEventListener('keyup', (keyEvent:any) => {
+            switch (keyEvent.key) {
+                case "Escape":
+                    this.closeMenu();
+                    break;
+            }
+        });
+        window.addEventListener('click', (clickEvent:any) => {
+            console.log(clickEvent);
+            if(this.hide){
+                return;
+            }
+
+            let jest = false;
+            let elem = clickEvent.target;
+            while(elem != document.body){
+                if( elem.id === 'left-menu' ){
+                    jest = true;
+                    break;
+                }
+                elem = elem.parentNode;
+            }
+            if(!jest){
+                this.closeMenu();
+            }
+
+        });
+    }
+
+    showMenu(event:any) {
         console.log('dupa');
         this.hide = false;
-        this.show = true;
+        event.stopPropagation();
+    }
+
+    closeMenu() {
+        console.log('close menu');
+        this.hide = true;
     }
 }
