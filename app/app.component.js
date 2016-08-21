@@ -14,6 +14,7 @@ var AppComponent = (function () {
         var _this = this;
         this.hide = true;
         this.show = false;
+        this.state = 'hide';
         window.addEventListener('keyup', function (keyEvent) {
             switch (keyEvent.key) {
                 case "Escape":
@@ -22,7 +23,6 @@ var AppComponent = (function () {
             }
         });
         window.addEventListener('click', function (clickEvent) {
-            console.log(clickEvent);
             if (_this.hide) {
                 return;
             }
@@ -41,20 +41,32 @@ var AppComponent = (function () {
         });
     }
     AppComponent.prototype.showMenu = function (event) {
-        console.log('dupa');
         this.hide = false;
+        this.state = 'show';
         event.stopPropagation();
     };
     AppComponent.prototype.closeMenu = function () {
-        console.log('close menu');
         this.hide = true;
+        this.state = 'hide';
     };
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
             styles: ["\n    .menu{  display: block;\n    width: 250px;\n    height: 100%;\n    z-index: 2;\n    top: 0;\n    position: absolute;\n    background-color: yellow;\n    float: left;\n    \n    }\n    .menu_hide{\n    left: -250px;\n    }\n    .menu_show{\n    left: 0px;\n    }"
             ],
-            template: '<h1>My First Angular 2 App</h1><h2>dupa 1234 dupa</h2><h3><button (click)="showMenu($event)">Show menu</button></h3><my-menu id="left-menu" class="menu" [ngClass]="{menu_hide:hide, menu_show:!hide}"></my-menu>'
+            template: "<h1>My First Angular 2 App</h1>\n    <h2>dupa 1234 dupa</h2>\n    <h3><button (click)=\"showMenu($event)\">Show menu</button></h3>\n    <my-menu @leftMenuState=\"state\" id=\"left-menu\" class=\"menu\" ></my-menu>",
+            animations: [
+                core_1.trigger('leftMenuState', [
+                    core_1.state('hide', core_1.style({
+                        left: '-250px'
+                    })),
+                    core_1.state('show', core_1.style({
+                        left: '0px'
+                    })),
+                    core_1.transition('hide => show', core_1.animate(250)),
+                    core_1.transition('show => hide', core_1.animate(250))
+                ])
+            ]
         }), 
         __metadata('design:paramtypes', [])
     ], AppComponent);

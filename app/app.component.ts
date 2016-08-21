@@ -1,4 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, trigger,
+    state,
+    style,
+    transition,
+    animate} from '@angular/core';
+
 @Component({
     selector: 'my-app',
     styles: [`
@@ -19,11 +24,32 @@ import {Component} from '@angular/core';
     left: 0px;
     }`
     ],
-    template: '<h1>My First Angular 2 App</h1><h2>dupa 1234 dupa</h2><h3><button (click)="showMenu($event)">Show menu</button></h3><my-menu id="left-menu" class="menu" [ngClass]="{menu_hide:hide, menu_show:!hide}"></my-menu>'
+    template: `<h1>My First Angular 2 App</h1>
+    <h2>dupa 1234 dupa</h2>
+    <h3><button (click)="showMenu($event)">Show menu</button></h3>
+    <my-menu @leftMenuState="state" id="left-menu" class="menu" ></my-menu>`,
+    animations: [
+        trigger('leftMenuState', [
+            state('hide', style({
+                left: '-250px'
+            })),
+            state('show',   style({
+                left: '0px'
+            })),
+            transition('hide => show', animate(250)),
+            transition('show => hide', animate(250))
+             /*   [
+                style({left:'*'}),
+                animate(250, style({left:'0'}))
+            ]
+            )*/
+        ])
+    ]
 })
 export class AppComponent {
     hide:boolean = true;
     show:boolean = false;
+    state:String = 'hide';
 
     constructor() {
         window.addEventListener('keyup', (keyEvent:any) => {
@@ -34,7 +60,6 @@ export class AppComponent {
             }
         });
         window.addEventListener('click', (clickEvent:any) => {
-            console.log(clickEvent);
             if(this.hide){
                 return;
             }
@@ -56,13 +81,14 @@ export class AppComponent {
     }
 
     showMenu(event:any) {
-        console.log('dupa');
         this.hide = false;
+        this.state = 'show';
         event.stopPropagation();
     }
 
     closeMenu() {
-        console.log('close menu');
         this.hide = true;
+        this.state = 'hide';
     }
+
 }
