@@ -9,26 +9,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var AppComponent = (function () {
-    function AppComponent() {
-        this.menuState = 'hide';
-        this.text1 = "text 1";
-        this.text2 = "text 2";
+var SvgShapeComponent = (function () {
+    function SvgShapeComponent() {
+        this.text = "I love SVG";
     }
-    AppComponent.prototype.showMenu = function (event) {
-        this.menuState = 'show';
-    };
-    AppComponent.prototype.debugInfo = function () {
-        alert(this.menuState);
-    };
-    AppComponent = __decorate([
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], SvgShapeComponent.prototype, "text", void 0);
+    SvgShapeComponent = __decorate([
         core_1.Component({
-            selector: 'my-app',
-            template: "<h1>My First Angular 2 App<button (click)=\"debugInfo()\">debug info</button></h1>\n    <h2>dupa 1234 dupa</h2>\n    <h3><button (click)=\"showMenu($event)\">Show menu</button></h3>\n    <my-svg-shape [text]=\"text1\"></my-svg-shape>\n    <my-svg-shape [text]=\"text2\"></my-svg-shape>\n    <my-menu [(menuState)]='menuState'></my-menu>",
+            selector: 'my-svg-shape',
+            template: "\n    <svg>\n        <text x=\"10\" y=\"15\" fill=\"red\">{{text}}</text>\n        <rect width=\"200\" height=\"100\" style=\"fill:rgb(0,0,255);stroke-width:2;stroke:rgb(0,0,0);fill-opacity:0.1;stroke-opacity:0.9\"></rect>\n        Sorry, your browser does not support inline SVG.\n    </svg>\n    "
         }), 
         __metadata('design:paramtypes', [])
-    ], AppComponent);
-    return AppComponent;
+    ], SvgShapeComponent);
+    return SvgShapeComponent;
 }());
-exports.AppComponent = AppComponent;
-//# sourceMappingURL=app.component.js.map
+exports.SvgShapeComponent = SvgShapeComponent;
+//# sourceMappingURL=svg-shape.component.js.map
