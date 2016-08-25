@@ -13,13 +13,14 @@ var platform_browser_1 = require('@angular/platform-browser');
 var app_component_1 = require('./app.component');
 var menu_component_1 = require('./menu.component');
 var svg_shape_component_1 = require('./svg-shape.component');
+var canvas_shape_component_1 = require('./canvas-shape.component');
 var AppModule = (function () {
     function AppModule() {
     }
     AppModule = __decorate([
         core_1.NgModule({
             imports: [platform_browser_1.BrowserModule],
-            declarations: [app_component_1.AppComponent, menu_component_1.MenuComponent, svg_shape_component_1.SvgShapeComponent],
+            declarations: [app_component_1.AppComponent, menu_component_1.MenuComponent, svg_shape_component_1.SvgShapeComponent, canvas_shape_component_1.CanvasShapeComponent],
             bootstrap: [app_component_1.AppComponent]
         }), 
         __metadata('design:paramtypes', [])

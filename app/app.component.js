@@ -24,7 +24,7 @@ var AppComponent = (function () {
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: "<h1>My First Angular 2 App<button (click)=\"debugInfo()\">debug info</button></h1>\n    <h2>dupa 1234 dupa</h2>\n    <h3><button (click)=\"showMenu($event)\">Show menu</button></h3>\n    <my-svg-shape [text]=\"text1\"></my-svg-shape>\n    <my-svg-shape [text]=\"text2\"></my-svg-shape>\n    <my-menu [(menuState)]='menuState'></my-menu>",
+            template: "<h1>My First Angular 2 App<button (click)=\"debugInfo()\">debug info</button></h1>\n    <h2>dupa 1234 dupa</h2>\n    <h3><button (click)=\"showMenu($event)\">Show menu</button></h3>\n    <!--<my-svg-shape [text]=\"text1\"></my-svg-shape>-->\n    <my-menu [(menuState)]='menuState'></my-menu>\n    <my-canvas-shape></my-canvas-shape>\n    ",
         }), 
         __metadata('design:paramtypes', [])
     ], AppComponent);

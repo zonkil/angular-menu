@@ -13,9 +13,10 @@ import {SvgShapeComponent} from "./svg-shape.component"
     template: `<h1>My First Angular 2 App<button (click)="debugInfo()">debug info</button></h1>
     <h2>dupa 1234 dupa</h2>
     <h3><button (click)="showMenu($event)">Show menu</button></h3>
-    <my-svg-shape [text]="text1"></my-svg-shape>
-    <my-svg-shape [text]="text2"></my-svg-shape>
-    <my-menu [(menuState)]='menuState'></my-menu>`,
+    <!--<my-svg-shape [text]="text1"></my-svg-shape>-->
+    <my-menu [(menuState)]='menuState'></my-menu>
+    <my-canvas-shape></my-canvas-shape>
+    `,
 })
 export class AppComponent {
 

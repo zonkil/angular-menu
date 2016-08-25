@@ -73,7 +73,6 @@ export class MenuComponent {
             if(!jest){
                 this.closeMenu();
             }
-
         }, true);
     }
 
