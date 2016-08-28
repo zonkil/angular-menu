@@ -6,23 +6,32 @@ var RectShape = (function () {
         this.napis = 'Hello world';
         this.textHeight = 20;
         this.checked = false;
+        this.isDrag = false;
         this.x = x;
         this.y = y;
         this.napis = napis;
     }
+    RectShape.prototype.move = function (dx, dy) {
+        this.x += dx;
+        this.y += dy;
+    };
     RectShape.prototype.draw = function (context) {
         context.save();
         context.font = this.textHeight + 'px sans-serif';
         var measure = context.measureText(this.napis);
         this.width = measure.width + 10;
         this.height = this.textHeight + 4;
+        var fillStyle = 'green';
         context.beginPath();
-        context.rect(this.x, this.y, this.width, this.height);
-        if (this.checked) {
-            context.fillStyle = 'green';
-            context.fill();
-            context.fillStyle = 'black';
+        if (this.isDrag) {
+            fillStyle = 'blue';
         }
+        context.rect(this.x, this.y, this.width, this.height);
+        //if (this.checked) {
+        context.fillStyle = fillStyle;
+        context.fill();
+        context.fillStyle = 'black';
+        //}
         //context.stroke();
         context.fillText(this.napis, this.x, this.y + this.textHeight);
         context.stroke();
@@ -41,6 +50,9 @@ var RectShape = (function () {
             isY = true;
         }
         return (isX && isY);
+    };
+    RectShape.prototype.setDrag = function (isDrag) {
+        this.isDrag = isDrag;
     };
     return RectShape;
 }());
