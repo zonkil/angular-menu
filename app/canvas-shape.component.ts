@@ -24,8 +24,6 @@ export class CanvasShapeComponent {
     dragRect:RectShape = null;
 
     ngAfterViewInit() {
-        var context = this.canvasElement.nativeElement.getContext("2d");
-
         this.shapes.push(new RectShape(10, 10, 'Hello'));
         this.shapes.push(new RectShape(50, 25, 'world! asdlfkjalsdkjf'));
 
@@ -111,12 +109,18 @@ export class CanvasShapeComponent {
 
     @HostListener('drop', ['$event'])
     onDrop(event) {
-        console.log(event);
+        event.preventDefault();
+        console.log(event.dataTransfer.getData('text'));
+        let offsetLeft = this.canvasElement.nativeElement.offsetLeft;
+        let offsetTop = this.canvasElement.nativeElement.offsetTop;
+        let dX = event.x - offsetLeft;
+        let dY = event.y - offsetTop;
+        this.addRect(dX, dY, event.dataTransfer.getData('text'));
+        this.draw();
     }
 
     @HostListener('dragover', ['$event'])
     onDragOver(event) {
-        console.log(event);
         event.preventDefault();
     }
 
@@ -134,5 +138,9 @@ export class CanvasShapeComponent {
             }
         }
         return null;
+    }
+
+    addRect(x, y, text) {
+        this.shapes.push(new RectShape(x, y, text));
     }
 }

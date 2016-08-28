@@ -19,7 +19,6 @@ var CanvasShapeComponent = (function () {
         this.dragRect = null;
     }
     CanvasShapeComponent.prototype.ngAfterViewInit = function () {
-        var context = this.canvasElement.nativeElement.getContext("2d");
         this.shapes.push(new RectShape_1.RectShape(10, 10, 'Hello'));
         this.shapes.push(new RectShape_1.RectShape(50, 25, 'world! asdlfkjalsdkjf'));
         this.draw();
@@ -89,10 +88,16 @@ var CanvasShapeComponent = (function () {
         }
     };
     CanvasShapeComponent.prototype.onDrop = function (event) {
-        console.log(event);
+        event.preventDefault();
+        console.log(event.dataTransfer.getData('text'));
+        var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
+        var offsetTop = this.canvasElement.nativeElement.offsetTop;
+        var dX = event.x - offsetLeft;
+        var dY = event.y - offsetTop;
+        this.addRect(dX, dY, event.dataTransfer.getData('text'));
+        this.draw();
     };
     CanvasShapeComponent.prototype.onDragOver = function (event) {
-        console.log(event);
         event.preventDefault();
     };
     CanvasShapeComponent.prototype.findRect = function (event) {
@@ -108,6 +113,9 @@ var CanvasShapeComponent = (function () {
             }
         }
         return null;
+    };
+    CanvasShapeComponent.prototype.addRect = function (x, y, text) {
+        this.shapes.push(new RectShape_1.RectShape(x, y, text));
     };
     __decorate([
         core_1.ViewChild('myCanvas'), 
