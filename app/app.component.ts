@@ -5,6 +5,7 @@ import {Component, trigger,
     animate} from '@angular/core';
 import {MenuComponent} from "./menu.component";
 import {SvgShapeComponent} from "./svg-shape.component"
+import {TableService} from "./table.service";
 
 
 @Component({
@@ -17,6 +18,7 @@ import {SvgShapeComponent} from "./svg-shape.component"
     <my-menu [(menuState)]='menuState'></my-menu>
     <my-canvas-shape></my-canvas-shape>
     `,
+    providers: [TableService]
 })
 export class AppComponent {
 

@@ -10,27 +10,39 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var RectShape_1 = require("./RectShape");
+var TableDrawer_1 = require("./table/TableDrawer");
+var table_service_1 = require("./table.service");
 var CanvasShapeComponent = (function () {
-    function CanvasShapeComponent() {
+    function CanvasShapeComponent(tableService) {
+        this.tableService = tableService;
         this.shapes = [];
+        this.tables = [];
+        this.items = [];
+        this.clickPos = null;
         this.mouseDown = false;
-        this.downX = 0;
-        this.downY = 0;
+        this.downPos = null;
         this.dragRect = null;
+        this.selectedTable = null;
+        this.selectedItem = null;
+        this.mouseStyle = "pointer";
     }
+    CanvasShapeComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.tableService.getTables().then(function (tables) {
+            _this.items = tables;
+            _this.draw();
+        });
+    };
     CanvasShapeComponent.prototype.ngAfterViewInit = function () {
         this.shapes.push(new RectShape_1.RectShape(10, 10, 'Hello'));
         this.shapes.push(new RectShape_1.RectShape(50, 25, 'world! asdlfkjalsdkjf'));
         this.draw();
     };
     CanvasShapeComponent.prototype.canvasClick = function (event) {
-        var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
-        var offsetTop = this.canvasElement.nativeElement.offsetTop;
-        this.clickX = event.x - offsetLeft;
-        this.clickY = event.y - offsetTop;
+        this.clickPos = this.calculateClickPosition(event);
         this.drawDebug();
         for (var i = this.shapes.length - 1; i >= 0; i--) {
-            var isIn = this.shapes[i].isIn(this.clickX, this.clickY);
+            var isIn = this.shapes[i].isIn(this.clickPos[0], this.clickPos[1]);
             if (isIn) {
                 this.shapes[i].setCheck();
                 this.draw();
@@ -45,14 +57,22 @@ var CanvasShapeComponent = (function () {
             var rect = _a[_i];
             rect.draw(context);
         }
+        for (var _b = 0, _c = this.tables; _b < _c.length; _b++) {
+            var table = _c[_b];
+            table.draw(context);
+        }
+        for (var _d = 0, _e = this.items; _d < _e.length; _d++) {
+            var item = _e[_d];
+            item.draw(context);
+        }
         this.drawDebug();
     };
     CanvasShapeComponent.prototype.drawDebug = function () {
         var context = this.canvasElement.nativeElement.getContext("2d");
-        context.clearRect(10, 140, 500, 12);
+        context.clearRect(10, 140, 100, 12);
         context.beginPath();
         context.font = 'italic 10pt Calibri';
-        context.fillText('(' + this.clickX + "," + this.clickY + ')', 10, 150);
+        context.fillText('(' + this.clickPos[0] + "," + this.clickPos[1] + ')', 10, 150);
         context.stroke();
     };
     CanvasShapeComponent.prototype.onMouseup = function () {
@@ -64,50 +84,45 @@ var CanvasShapeComponent = (function () {
     };
     CanvasShapeComponent.prototype.onMousemove = function (event) {
         if (this.mouseDown && this.dragRect !== null) {
-            var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
-            var offsetTop = this.canvasElement.nativeElement.offsetTop;
-            var dX = event.x - offsetLeft;
-            var dY = event.y - offsetTop;
-            //this.drawDebug();
-            this.dragRect.move(dX - this.downX, dY - this.downY);
+            var delta = this.calculateClickPosition(event);
+            this.dragRect.move(delta[0] - this.downPos[0], delta[1] - this.downPos[1]);
             this.draw();
-            this.downX = dX;
-            this.downY = dY;
+            this.downPos = delta;
+        }
+        var tmp = this.findItem(event);
+        if (tmp !== null) {
+            this.mouseStyle = "default";
+        }
+        else {
+            this.mouseStyle = "pointer";
         }
     };
     CanvasShapeComponent.prototype.onMousedown = function (event) {
+        this.unselectItem();
         this.mouseDown = true;
         this.dragRect = this.findRect(event);
         if (this.dragRect !== null) {
             this.dragRect.setDrag(true);
-            var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
-            var offsetTop = this.canvasElement.nativeElement.offsetTop;
-            this.downX = event.x - offsetLeft;
-            this.downY = event.y - offsetTop;
-            this.draw();
+            this.downPos = this.calculateClickPosition(event);
         }
+        this.selectItem(event);
+        this.draw();
     };
     CanvasShapeComponent.prototype.onDrop = function (event) {
         event.preventDefault();
         console.log(event.dataTransfer.getData('text'));
-        var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
-        var offsetTop = this.canvasElement.nativeElement.offsetTop;
-        var dX = event.x - offsetLeft;
-        var dY = event.y - offsetTop;
-        this.addRect(dX, dY, event.dataTransfer.getData('text'));
+        var dropPos = this.calculateClickPosition(event);
+        this.addRect(dropPos[0], dropPos[1], event.dataTransfer.getData('text'));
         this.draw();
     };
     CanvasShapeComponent.prototype.onDragOver = function (event) {
         event.preventDefault();
     };
     CanvasShapeComponent.prototype.findRect = function (event) {
-        var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
-        var offsetTop = this.canvasElement.nativeElement.offsetTop;
-        this.clickX = event.x - offsetLeft;
-        this.clickY = event.y - offsetTop;
+        this.clickPos = this.calculateClickPosition(event);
         this.drawDebug();
         for (var i = this.shapes.length - 1; i >= 0; i--) {
-            var isIn = this.shapes[i].isIn(this.clickX, this.clickY);
+            var isIn = this.shapes[i].isIn(this.clickPos[0], this.clickPos[1]);
             if (isIn) {
                 return this.shapes[i];
             }
@@ -116,6 +131,38 @@ var CanvasShapeComponent = (function () {
     };
     CanvasShapeComponent.prototype.addRect = function (x, y, text) {
         this.shapes.push(new RectShape_1.RectShape(x, y, text));
+    };
+    CanvasShapeComponent.prototype.addTable = function (table) {
+        this.items.push(new TableDrawer_1.TableDrawer(table));
+    };
+    CanvasShapeComponent.prototype.selectItem = function (event) {
+        var table = this.findItem(event);
+        if (table !== null) {
+            this.unselectItem();
+            this.selectedItem = table;
+            this.selectedItem.setSelected(true);
+        }
+    };
+    CanvasShapeComponent.prototype.unselectItem = function () {
+        if (this.selectedItem != null) {
+            this.selectedItem.setSelected(false);
+        }
+    };
+    CanvasShapeComponent.prototype.findItem = function (event) {
+        this.clickPos = this.calculateClickPosition(event);
+        this.drawDebug();
+        for (var i = this.items.length - 1; i >= 0; i--) {
+            var isIn = this.items[i].isIn(this.clickPos[0], this.clickPos[1]);
+            if (isIn) {
+                return this.items[i];
+            }
+        }
+        return null;
+    };
+    CanvasShapeComponent.prototype.calculateClickPosition = function (event) {
+        var offsetLeft = this.canvasElement.nativeElement.offsetLeft;
+        var offsetTop = this.canvasElement.nativeElement.offsetTop;
+        return [event.x - offsetLeft, event.y - offsetTop];
     };
     __decorate([
         core_1.ViewChild('myCanvas'), 
@@ -154,9 +201,9 @@ var CanvasShapeComponent = (function () {
     CanvasShapeComponent = __decorate([
         core_1.Component({
             selector: 'my-canvas-shape',
-            template: "\n        <canvas width=\"578\" height=\"200\" #myCanvas  style=\"border-style: solid; cursor: pointer;\">\n\n        </canvas>\n    "
+            template: "\n        <canvas width=\"578\" height=\"500\" #myCanvas  style=\"border-style: solid\" [ngStyle]=\"{'cursor': mouseStyle}\">\n        </canvas>\n    "
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [table_service_1.TableService])
     ], CanvasShapeComponent);
     return CanvasShapeComponent;
 }());

@@ -68,4 +68,5 @@ export class RectShape {
     public setDrag(isDrag:boolean):void {
         this.isDrag = isDrag;
     }
+
 }
